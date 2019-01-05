@@ -523,6 +523,7 @@ shinyServer(
    
 #    
 output$testtable1<-renderPlot({
+  withProgress(message = "LOADING" , detail="please wait", style="notification", value=NULL, {
 #
 # #  #str(Total_Long)
 #
@@ -536,6 +537,7 @@ output$testtable1<-renderPlot({
     scale_y_continuous(label = comma) +
     theme(axis.text = element_text(color = "black", size = 12), axis.title.x = element_text(size = 14), axis.title.y =
             element_text(size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14))
+  })
 })
 
 # 

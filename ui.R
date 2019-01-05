@@ -14,6 +14,7 @@ fluidPage(
   tags$h2("App name... logo?"),
   p("this is a short decription of the model, or it can be deleted. This section can be a banner?"),
   hr(),
+  tags$head(tags$style(".shiny-notification {position: fixed; top: 30% ;left: 60%;color: rgb(255, 255, 255); font-size: 50px; line-height: 50px; padding: 16px; border-radius: 1px; font-family: Verdana, Geneva, sans-serif; font-weight: 400; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none; background-image: linear-gradient(to right, rgb(28, 110, 164) 0%, rgb(35, 136, 203) 50%, rgb(20, 78, 117) 100%); box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px; border: 2px solid rgb(28, 110, 164); display: inline-block;")),
 
    mainPanel(width = 12,
                tabsetPanel(id="tabs",
