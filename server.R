@@ -472,7 +472,9 @@ shinyServer(
     rivres<-eventReactive(input$runthemodel,{
      adamnriverfunction()
     }) 
-    
+    nyears<-eventReactive(input$runthemodel,{
+      input$ayears
+    })
     
     ####IF we make a more complex version of the app this should be changed from hard-coding to soft-coding with variables defined in the first
     #lines if the server, while creating alternative names for each 
@@ -482,7 +484,7 @@ shinyServer(
      #change this values and take them outside of the function
    
                 ProbSpawn = rep(0.95, times = 6), 
-               alpha=input$alpha, 
+               alpha=0.0019, 
                RPA=582.659,
                FecSlope=871.72, 
                FecIntercept=50916,  
@@ -494,7 +496,7 @@ shinyServer(
                HabitatSize = rivres()[[5]],
                InstOcean = 0.648365, 
                InstSpawn = 2.3913, JuvFWRes = 0.66667 , SpawnFWRes =0.25, 
-               SpawnOceanRes = 0.75, MassAtAge = c(144, 186, 209, 244, 277, 353), nYears = 300,
+               SpawnOceanRes = 0.75, MassAtAge = c(144, 186, 209, 244, 277, 353), nYears = nyears(),
                Escapement = 1000, InitialOceanDist = c(0.60, 0.24, 0.093, 0.0238, 0.0076, 0.000423, 0.000148, 0.0000535, 0.0000193), 
                PropSpawners = 0.0378, InitialSpawnDist = c(0.33877, 0.31471, 0.22514, 0.08143, 0.02937, 0.01059) 
                #Dist_US =(1-(rivres()[[5]]/(rev(cumsum(rev(rivres()[[5]]))))))
@@ -502,6 +504,7 @@ shinyServer(
 
    
      })
+   
    
   ###years is softcoded
    functionforplot<-function(){
@@ -512,7 +515,7 @@ shinyServer(
        rowSums(RUN()[[length(RUN())]][[x]]$StayHU)
      }))
      colnames(Totals2) <- ColNames
-     Totals2 <- mutate(Totals2, Year = c(1:300))
+     Totals2 <- mutate(Totals2, Year = c(1:nyears()))
      
      #Change from wide to long format for plotting
      Total_Long = melt(Totals2, id = c("Year"))
@@ -625,7 +628,7 @@ output$testtable1<-renderPlot({
     })
     rivinput<-function(){
       
-      labelsfull<-c("Adult upstream", "Juvenile Upstream","Adult Downstream")
+      labelsfull<-c("Adult upstream", "Juvenile Downstream","Adult Downstream")
       labelsshort<-c("AU","JD","AD")
       nofpar<-1:3
       k<-NULL
@@ -670,7 +673,7 @@ output$testtable1<-renderPlot({
          
           
           column(9,
-                 numericInput('alpha',tags$h6('lifetime rep. rate (alpha):'),0.0019))
+                 numericInput('ayears',tags$h6('Years'),300))
           
         ),
  flowLayout(
@@ -692,58 +695,52 @@ output$testtable1<-renderPlot({
         column(12,
         sliderInput("MTAU1", "Adult Upstream",min = 0, max=100, value=60, step = 1)),
         column(12,
-        sliderInput("MTAD1", "Adult Downstream",min = 0, max=100, value=50, step = 1)),
+        sliderInput("MTAD1", "Adult Downstream",min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("MTJD1", "Juvenile Downstream",min = 0, max=100, value=50, step = 1))
+        sliderInput("MTJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
         ),
         div(class= "option-header", "Woodland"),
         flowLayout(
         column(12,
-        sliderInput("WLAU1", "Adult Upstream",min = 0, max=100, value=50, step = 1)),
+        sliderInput("WLAU1", "Adult Upstream",min = 0, max=100, value=40, step = 1)),
         column(12,
-        sliderInput("WLAD1", "Adult Downstream",min = 0, max=100, value=50, step = 1)),
+        sliderInput("WLAD1", "Adult Downstream",min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("WLJD1", "Juvenile Downstream",min = 0, max=100, value=50, step = 1))
+        sliderInput("WLJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
         ),
         div(class= "option-header", "Grand Falls"),
         flowLayout(
         column(12,
-        sliderInput("GFAU1", "Adult Upstream",min = 0, max=100, value=50, step = 1)),
+        sliderInput("GFAU1", "Adult Upstream",min = 0, max=100, value=75, step = 1)),
         column(12,
-        sliderInput("GFAD1", "Adult Downstream",min = 0, max=100, value=50, step = 1)),
+        sliderInput("GFAD1", "Adult Downstream",min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("GFJD1", "Juvenile Downstream",min = 0, max=100, value=50, step = 1))
+        sliderInput("GFJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
         ),
         div(class= "option-header", "Spednic"),
         flowLayout(
         column(12,
-        sliderInput("SPAU1", "Adult Upstream",min = 0, max=100, value=50, step = 1)),
+        sliderInput("SPAU1", "Adult Upstream",min = 0, max=100, value=67, step = 1)),
         column(12,
-        sliderInput("SPAD1", "Adult Downstream",min = 0, max=100, value=50, step = 1)),
+        sliderInput("SPAD1", "Adult Downstream",min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("SPJD1", "Juvenile Downstream",min = 0, max=100, value=50, step = 1))
-        ),
-        div(class="option-header", tags$h4("Mortality")),
-        flowLayout(
-        column(12,
-        sliderInput("ocean", "Ocean",min = 0, max=100, value=50, step = 1)),
-        column(12,
-        sliderInput("Juv", "Juvenile",min = 0, max=100, value=50, step = 1)),
-        column(12,
-        sliderInput("DWSTR", "Downstream",min = 0, max=100, value=50, step = 1))
+        sliderInput("SPJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
         ),
         
-        
         flowLayout(
-        
+         
         
         column(9,
-        numericInput("alpha",tags$h6("lifetime rep. rate (alpha):"),0.0019))
+        numericInput("ayears",tags$h6("Years"),300))
         
-        ),
+),
+        
+       
         flowLayout(
-        column(9,
-        actionButton("runthemodel","RUN"))
+        column(4,
+        actionButton("runthemodel","RUN")),
+        column(4,
+        actionButton("changevalues","Reset Values"))
 )
 )
         '
@@ -753,7 +750,20 @@ output$testtable1<-renderPlot({
       return(theresult2)
     } 
     
-    
+    observeEvent(input$changevalues, {
+      updateSliderInput(session, "MTAU1", value = 60)
+      updateSliderInput(session, "MTAD1", value = 90)
+      updateSliderInput(session, "MTJD1", value = 90)
+      updateSliderInput(session, "WLAU1", value = 40)
+      updateSliderInput(session, "WLAD1", value = 90)
+      updateSliderInput(session, "WLJD1", value = 90)
+      updateSliderInput(session, "GFAU1", value = 75)
+      updateSliderInput(session, "GFAD1", value = 90)
+      updateSliderInput(session, "GFJD1", value = 90)
+      updateSliderInput(session, "SPAU1", value = 60)
+      updateSliderInput(session, "SPAD1", value = 90)
+      updateSliderInput(session, "SPJD1", value = 90)
+    })
     
     ####TEST##############
     ##################
