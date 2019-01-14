@@ -653,11 +653,11 @@ output$testtable1<-renderPlot({
         
         #######
         for (j in 1:ans()){
-         m<- paste0("div(class= 'option-header', '",input[[paste0("damlabel",j)]],"'),flowLayout(",
+         m<- paste0("div(class= 'option-header', h3('",input[[paste0("damlabel",j)]],"')),flowLayout(",
                         paste0("column(12, sliderInput(",
                         paste0("'",labelsshort[nofpar], j),"', '", labelsfull[nofpar], "',min = 0, max=100, value=50, step = 1))",
                         collapse = ", "),
-                 "),",collapse=", "
+                 "), br(),",collapse=", "
                  
           )
           k<-paste0(k,m)
@@ -690,7 +690,7 @@ output$testtable1<-renderPlot({
         theresult<-'div(class="option-group",
                                      div(class="option-header", tags$h4("PASSAGE")),
        
-        div(class= "option-header", "Milltown"),
+        div(class= "option-header", h3("Milltown")),
         flowLayout(
         column(12,
         sliderInput("MTAU1", "Adult Upstream",min = 0, max=100, value=60, step = 1)),
@@ -699,7 +699,8 @@ output$testtable1<-renderPlot({
         column(12,
         sliderInput("MTJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
         ),
-        div(class= "option-header", "Woodland"),
+        br(),
+        div(class= "option-header", h3("Woodland")),
         flowLayout(
         column(12,
         sliderInput("WLAU1", "Adult Upstream",min = 0, max=100, value=40, step = 1)),
@@ -708,7 +709,7 @@ output$testtable1<-renderPlot({
         column(12,
         sliderInput("WLJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
         ),
-        div(class= "option-header", "Grand Falls"),
+        div(class= "option-header", h3("Grand Falls")),
         flowLayout(
         column(12,
         sliderInput("GFAU1", "Adult Upstream",min = 0, max=100, value=75, step = 1)),
@@ -717,7 +718,7 @@ output$testtable1<-renderPlot({
         column(12,
         sliderInput("GFJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
         ),
-        div(class= "option-header", "Spednic"),
+        div(class= "option-header", h3("Spednic")),
         flowLayout(
         column(12,
         sliderInput("SPAU1", "Adult Upstream",min = 0, max=100, value=67, step = 1)),
