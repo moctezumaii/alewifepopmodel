@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyWidgets)
 shinyServer( 
   function(input, output, session){
     hideTab("tabs","Comparative model")
@@ -526,7 +527,8 @@ shinyServer(
    
 #    
 output$testtable1<-renderPlot({
-  withProgress(message = "LOADING" , detail="please wait", style="notification", value=NULL, {
+     withProgress(message = "LOADING" , detail="please wait", style="notification", value=NULL, {
+  
 #
 # #  #str(Total_Long)
 #
@@ -540,7 +542,7 @@ output$testtable1<-renderPlot({
     scale_y_continuous(label = comma) +
     theme(axis.text = element_text(color = "black", size = 12), axis.title.x = element_text(size = 14), axis.title.y =
             element_text(size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14))
-  })
+     })
 })
 
 # 
@@ -663,11 +665,13 @@ output$testtable1<-renderPlot({
           k<-paste0(k,m)
           
         } 
-        
+        output$FAQpassage<-renderPrint({"Text explaining passage?"})
         
         
         theresult<-paste0("div(class='option-group',
-               div(class='option-header', tags$h4('PASSAGE')),",
+               div(class='option-header', tags$h4('PASSAGE')),
+                          setSliderColor(rep('black',1000),1:1000),
+       chooseSliderSkin('Nice'),",
            k,
           "flowLayout(
          
@@ -688,60 +692,64 @@ output$testtable1<-renderPlot({
       } else {
         
         theresult<-'div(class="option-group",
-                                     div(class="option-header", tags$h4("PASSAGE")),
-       
+                                     div(class="option-header",fluidRow(column(3,
+tags$h4("PASSAGE")),column(3,dropdownButton(tags$h4("text"),tags$h5("Here we will explain what this is about"), circle=F,status="danger", label="?" ,width="300px",tooltip=tooltipOptions(title="Click"))))),
+         setSliderColor(rep("black",1000),1:1000),
+       chooseSliderSkin("Nice"),
         div(class= "option-header", h3("Milltown")),
         flowLayout(
         column(12,
-        sliderInput("MTAU1", "Adult Upstream",min = 0, max=100, value=60, step = 1)),
+        sliderInput("MTAU1", tags$h6("Adult Upstream"),min = 0, max=100, value=60, step = 1)),
         column(12,
-        sliderInput("MTAD1", "Adult Downstream",min = 0, max=100, value=90, step = 1)),
+        sliderInput("MTAD1", tags$h6("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("MTJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
+        sliderInput("MTJD1", tags$h6("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
         ),
         br(),
         div(class= "option-header", h3("Woodland")),
         flowLayout(
         column(12,
-        sliderInput("WLAU1", "Adult Upstream",min = 0, max=100, value=40, step = 1)),
+        sliderInput("WLAU1",tags$h6("Adult Upstream"),min = 0, max=100, value=40, step = 1)),
         column(12,
-        sliderInput("WLAD1", "Adult Downstream",min = 0, max=100, value=90, step = 1)),
+        sliderInput("WLAD1", tags$h6("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("WLJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
+        sliderInput("WLJD1", tags$h6("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
         ),
-        div(class= "option-header", h3("Grand Falls")),
+br(),        
+div(class= "option-header", h3("Grand Falls")),
         flowLayout(
         column(12,
-        sliderInput("GFAU1", "Adult Upstream",min = 0, max=100, value=75, step = 1)),
+        sliderInput("GFAU1", tags$h6("Adult Upstream"),min = 0, max=100, value=75, step = 1)),
         column(12,
-        sliderInput("GFAD1", "Adult Downstream",min = 0, max=100, value=90, step = 1)),
+        sliderInput("GFAD1", tags$h6("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("GFJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
+        sliderInput("GFJD1", tags$h6("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
         ),
+br(),
         div(class= "option-header", h3("Spednic")),
         flowLayout(
         column(12,
-        sliderInput("SPAU1", "Adult Upstream",min = 0, max=100, value=67, step = 1)),
+        sliderInput("SPAU1", tags$h6("Adult Upstream"),min = 0, max=100, value=67, step = 1)),
         column(12,
-        sliderInput("SPAD1", "Adult Downstream",min = 0, max=100, value=90, step = 1)),
+        sliderInput("SPAD1", tags$h6("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("SPJD1", "Juvenile Downstream",min = 0, max=100, value=90, step = 1))
+        sliderInput("SPJD1", tags$h6("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
         ),
         
         flowLayout(
          
         
         column(9,
-        numericInput("ayears",tags$h6("Years"),300))
+        numericInput("ayears",tags$h6("Years"),200))
         
 ),
         
        
         flowLayout(
         column(4,
-        actionButton("runthemodel","RUN")),
+        actionButton("runthemodel","RUN",style = "color: rgb(0, 0, 0); font-size: 25px; line-height: 30px; padding: 8px; border-radius: 1px; font-family: Verdana, Geneva, sans-serif; font-weight: 150; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none; border: 2px solid #000000; display: inline-block;}")),
         column(4,
-        actionButton("changevalues","Reset Values"))
+        actionButton("changevalues","Reset Values",style = "color: rgb(0, 0, 0); font-size: 25px; line-height: 30px; padding: 8px; border-radius: 1px; font-family: Verdana, Geneva, sans-serif; font-weight: 150; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none; border: 2px solid #000000; display: inline-block;}"))
 )
 )
         '
