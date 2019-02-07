@@ -2,13 +2,29 @@ library(shiny)
 library(shinyWidgets)
 shinyServer( 
   function(input, output, session){
+    
     hideTab("tabs","Comparative model")
     hideTab("tabs","test101")
+    hideTab("tabs","multiple")
+   # hideTab("tabs","juveniles")
+  #  hideTab("tabs","Ocean")
     observeEvent(input$app,{
       updateTabsetPanel(session, "tabs", "test101")
     })
     
     
+    emptytable<-function(){
+    et<- data.frame(matrix(NA,nrow=((rivres()[[1]]*3)+2),ncol=1))
+      tmp<-sapply(1:rivres()[[1]], function(x){rep(x,3)}) 
+      rownames(et)<-c(c(tmp),"","")
+      et[,1]<-c(rep(c("Adult UP", "Adult Dw", "Juv DW"),rivres[[1]]),"Years","Total Abundance") 
+    }
+    emptytable2<-eventReactive(input$loadbutton1,{
+      emptytable()
+    })
+    empty<-eventReactive(input$loadbutton1,{
+      NULL
+    })
     
     observeEvent(input$loadbutton1,{
       updateTabsetPanel(session, "tabs", "Comparative model")
@@ -420,7 +436,7 @@ shinyServer(
       }
       
       ####Make list of ouputs to put into the function####
-      List_of_Outputs <- list(Recruitment = BH, Maturing = Maturing, Ocean_Abund = Ocean_Abund, Ocean_Mort = Ocean_Mort, 
+      List_of_Outputs <- list(Recruitment = BH,YOYSurv = Recruit, Maturing = Maturing, Ocean_Abund = Ocean_Abund, Ocean_Mort = Ocean_Mort, 
                               Ocean_Surv = Ocean_Surv, Spawn_Ocean = Spawn_Ocean, SpawnAbund = SpawnAbund, SpawnMort = SpawnMort, 
                               SpawnSurv = SpawnSurv,HUs=results)
       
@@ -521,27 +537,47 @@ shinyServer(
      #Change from wide to long format for plotting
      Total_Long = melt(Totals2, id = c("Year"))
      Total_Long$Year = as.integer(Total_Long$Year)
-     return(Total_Long)
+     res<-list(Total_Long,Totals2)
+     return(res)
    }  
    
    
+
+   functionforcomp<-function(){
+     River_Total <- data.frame(res[[2]] %>% select(contains("TotalHU")) %>% rowSums(na.rm = TRUE))
+     colnames(River_Total) <- "RiverTotal"
+     EndTotal <- last(River_Total$RiverTotal)
+     
+   }  
+   
+   newfunctionforcomp<-eventReactive(input$forcomparisons,{
+     functionforcomp()
+   })
+   
+  #matri therealdeal()<-function()
+   
+   
+   
+#functionforcomp2<-event   
+   
 #    
 output$testtable1<-renderPlot({
+  
      withProgress(message = "LOADING" , detail="please wait", style="notification", value=NULL, {
   
-#
+#     Plo
 # #  #str(Total_Long)
 #
 #
 #    # ##Code for plot showing the theoretical abundance through time for all four habitat units:##
-  ggplot(functionforplot()) +
+  ggplot(functionforplot()[[1]]) +
     geom_line(aes(x = Year, y = value, color = variable), size = 1) +
-    ylab("Theoretical Abundance") + theme_classic() +
+    ylab("Theoretical Spawner Abundance") + xlab("") + theme_classic() +
     scale_color_manual(values = c("darkorange2", "chocolate4", "blue4", "darkgoldenrod", "deepskyblue4", "darkgreen"),
                        labels = c("Dam 1", "Dam 2", "Dam 3", "Dam 4", "Dam 5", "Dam 6"), name = "Site") +
     scale_y_continuous(label = comma) +
-    theme(axis.text = element_text(color = "black", size = 12), axis.title.x = element_text(size = 14), axis.title.y =
-            element_text(size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14))
+    theme(axis.text.y = element_text(color = "black", size = 14),axis.text.x = element_blank(), axis.title.x = element_text(size = 14), axis.title.y =
+            element_text(size = 16), legend.text = element_text(size = 14), legend.title = element_text(size = 14))
      })
 })
 
@@ -586,9 +622,9 @@ output$testtable1<-renderPlot({
         for (i in 1:ans()){
           output[[i]] = tagList()
           output[[i]][[1]]=column(6,
-                                 textInput(D[i], label=paste0("Name of dam #",i),value=paste0("Dam ",i)))
+                                 textInput(D[i], label=tags$h5(paste0("Name of dam #",i)),value=paste0("Dam ",i)))
           output[[i]][[2]]=column(6,
-                                  numericInput(N[i], label=paste0("Available habitat (acres) dam #",i),value=200,min=1))
+                                  numericInput(N[i], label=tags$h5(paste0("Available habitat (acres) dam #",i)),value=200,min=1))
           #nameofdam<-paste("Name of dam #",i,sep=" ")
           #nameofinput<-paste("dam#",i,sep="")
           #textInput(nameofinput, label=nameofdam, value = nameofdam)
@@ -655,9 +691,9 @@ output$testtable1<-renderPlot({
         
         #######
         for (j in 1:ans()){
-         m<- paste0("div(class= 'option-header', h3('",input[[paste0("damlabel",j)]],"')),flowLayout(",
+         m<- paste0("div(class= 'option-header', h4('",input[[paste0("damlabel",j)]],"')),flowLayout(",
                         paste0("column(12, sliderInput(",
-                        paste0("'",labelsshort[nofpar], j),"', '", labelsfull[nofpar], "',min = 0, max=100, value=50, step = 1))",
+                        paste0("'",labelsshort[nofpar], j),"', tags$h5('", labelsfull[nofpar], "'),min = 0, max=100, value=50, step = 1))",
                         collapse = ", "),
                  "), br(),",collapse=", "
                  
@@ -670,14 +706,13 @@ output$testtable1<-renderPlot({
         
         theresult<-paste0("div(class='option-group',
                div(class='option-header', tags$h4('PASSAGE')),
-                          setSliderColor(rep('black',1000),1:1000),
-       chooseSliderSkin('Nice'),",
+                          ",
            k,
           "flowLayout(
          
           
           column(9,
-                 numericInput('ayears',tags$h6('Years'),300))
+                 numericInput('ayears',tags$h5('Years'),200))
           
         ),
  flowLayout(
@@ -693,63 +728,62 @@ output$testtable1<-renderPlot({
         
         theresult<-'div(class="option-group",
                                      div(class="option-header",fluidRow(column(3,
-tags$h4("PASSAGE")),column(3,dropdownButton(tags$h4("text"),tags$h5("Here we will explain what this is about"), circle=F,status="danger", label="?" ,width="300px",tooltip=tooltipOptions(title="Click"))))),
-         setSliderColor(rep("black",1000),1:1000),
-       chooseSliderSkin("Nice"),
-        div(class= "option-header", h3("Milltown")),
+tags$h4("PASSAGE")),column(3,dropdownButton(tags$h5("text"),tags$h6("Here we will explain what this is about"), circle=T,status="danger", icon=icon("question") ,width="200px",tooltip=tooltipOptions(title="Click"))))),
+       
+        div(class= "option-header", h4("Dam 1 Milltown")),
         flowLayout(
         column(12,
-        sliderInput("MTAU1", tags$h6("Adult Upstream"),min = 0, max=100, value=60, step = 1)),
+        sliderInput("MTAU1", tags$h5("Adult Upstream"),min = 0, max=100, value=60, step = 1)),
         column(12,
-        sliderInput("MTAD1", tags$h6("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
+        sliderInput("MTAD1", tags$h5("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("MTJD1", tags$h6("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
+        sliderInput("MTJD1", tags$h5("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
         ),
         br(),
-        div(class= "option-header", h3("Woodland")),
+        div(class= "option-header", h4("Dam 2 Woodland")),
         flowLayout(
         column(12,
-        sliderInput("WLAU1",tags$h6("Adult Upstream"),min = 0, max=100, value=40, step = 1)),
+        sliderInput("WLAU1",tags$h5("Adult Upstream"),min = 0, max=100, value=40, step = 1)),
         column(12,
-        sliderInput("WLAD1", tags$h6("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
+        sliderInput("WLAD1", tags$h5("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("WLJD1", tags$h6("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
+        sliderInput("WLJD1", tags$h5("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
         ),
 br(),        
-div(class= "option-header", h3("Grand Falls")),
+div(class= "option-header", h4("Dam 3 Grand Falls")),
         flowLayout(
         column(12,
-        sliderInput("GFAU1", tags$h6("Adult Upstream"),min = 0, max=100, value=75, step = 1)),
+        sliderInput("GFAU1", tags$h5("Adult Upstream"),min = 0, max=100, value=75, step = 1)),
         column(12,
-        sliderInput("GFAD1", tags$h6("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
+        sliderInput("GFAD1", tags$h5("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("GFJD1", tags$h6("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
+        sliderInput("GFJD1", tags$h5("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
         ),
 br(),
-        div(class= "option-header", h3("Spednic")),
+        div(class= "option-header", h4("Dam 4 Spednic")),
         flowLayout(
         column(12,
-        sliderInput("SPAU1", tags$h6("Adult Upstream"),min = 0, max=100, value=67, step = 1)),
+        sliderInput("SPAU1", tags$h5("Adult Upstream"),min = 0, max=100, value=67, step = 1)),
         column(12,
-        sliderInput("SPAD1", tags$h6("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
+        sliderInput("SPAD1", tags$h5("Adult Downstream"),min = 0, max=100, value=90, step = 1)),
         column(12,
-        sliderInput("SPJD1", tags$h6("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
+        sliderInput("SPJD1", tags$h5("Juvenile Downstream"),min = 0, max=100, value=90, step = 1))
         ),
         
         flowLayout(
          
         
         column(9,
-        numericInput("ayears",tags$h6("Years"),200))
+        numericInput("ayears",tags$h5("Years"),200))
         
 ),
         
        
         flowLayout(
         column(4,
-        actionButton("runthemodel","RUN",style = "color: rgb(0, 0, 0); font-size: 25px; line-height: 30px; padding: 8px; border-radius: 1px; font-family: Verdana, Geneva, sans-serif; font-weight: 150; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none; border: 2px solid #000000; display: inline-block;}")),
+        actionButton("runthemodel","RUN")),
         column(4,
-        actionButton("changevalues","Reset Values",style = "color: rgb(0, 0, 0); font-size: 25px; line-height: 30px; padding: 8px; border-radius: 1px; font-family: Verdana, Geneva, sans-serif; font-weight: 150; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none; border: 2px solid #000000; display: inline-block;}"))
+        actionButton("changevalues","Reset Values"))
 )
 )
         '
@@ -790,6 +824,12 @@ br(),
        showTab(inputId = "tabs", target = "test101")
      })
      
+     
+    observeEvent(input$runthemodel,{
+      output$button<-renderUI(
+       {actionButton("forcomparisons","Save for comparison")}
+     )
+    })
     output$riverout<-renderUI({ 
       
       
@@ -817,5 +857,66 @@ br(),
     output$StCroix<-renderText({
         "If you read this, this chunk of code is working"
       })
+    
+    
+    
+  downloadfunction<-function(){
+  JuvNames1 <- (sapply(1:rivres()[[1]], function(x){
+    paste0("JuvenilesHU", x)
+  }))
+  JuvNames2 <- (sapply(1:rivres()[[1]], function(x){
+    paste0("SurvivingJuvenilesHU", x)
+  }))
+  Names <- c("Year", JuvNames1, JuvNames2)
+  Results_Juveniles <- data.frame(RUN()$Recruitment, RUN()$YOYSurv[1:rivres()[[1]]])
+  colnames(Results_Juveniles) <- Names
+  Results_Ocean_Pop <- data.frame(RUN()$Ocean_Abund, RUN()$Ocean_Mort[2:10], RUN()$Ocean_Surv[2:10])
+  Results_Spawning_Pop <- data.frame(RUN()$SpawnAbund, RUN()$SpawnMort[2:7], RUN()$SpawnSurv[2:7], RUN()$Maturing[2:7])
+  listofres<-list(Results_Juveniles, Results_Ocean_Pop,Results_Spawning_Pop)
+  return(listofres)
+}
+
+  downloadall<-eventReactive(input$runthemodel,{
+    downloadfunction()
+  }) 
+
+output$downloadjuv<-downloadHandler(
+  filename = 'juveniles.csv',
+  content = function(file){
+    write.csv(downloadall()[[1]],file,row.names=T)
+  }
+
+)
+
+output$downloadocean<-downloadHandler(
+  filename = 'ocean.csv',
+  content = function(file){
+    write.csv(downloadall()[[2]],file,row.names=T)
+  }
+
+)
+
+output$downloadspawning<-downloadHandler(
+  filename = 'spawning.csv',
+  content = function(file){
+    write.csv(downloadall()[[3]],file,row.names=T)
+  }
+
+)
+  
+   
+    output$testable2<-renderTable({
+     
+      downloadall()[[1]]})
+    
+    output$testable3<-renderTable({
+      
+      downloadall()[[2]]})
+    
+    output$testable4<-renderTable({
+      downloadall()[[3]]
+    })
+    
     }
 ) 
+

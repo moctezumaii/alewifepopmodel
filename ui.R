@@ -13,13 +13,22 @@ library(shinyWidgets)
 library(shinycssloaders)
 
 
+fluidPage(
+  theme="bootstrap.css",
+           tags$style(type = "text/css", "
+      .irs-bar {width: 100%; height: 25px; background: black; border-top: 1px solid black; border-bottom: 1px solid black;}
+                      .irs-bar-edge {background: black; border: 1px solid black; height: 25px; border-radius: 0px; width: 20px;}
+                      .irs-line {border: 1px solid black; height: 25px; border-radius: 0px;}
+                      .irs-grid-text {font-family: 'arial'; color: white; bottom: 17px; z-index: 1;font-size:0px}
+                      .irs-grid-pol {display: none;}
+                      .irs-max {font-family: 'arial'; color: black;font-size:16px}
+                      .irs-min {font-family: 'arial'; color: black;font-size:16px}
+                      .irs-single {color:black; background:#FFF;font-size:18px}
+                      .irs-slider {width: 30px; height: 30px; top: 22px;}
+                      "),
+  tags$h1("Alewife population model"),
 
-
-fluidPage( theme="bootstrap.css",
- 
-  tags$h2("Alewife population model"),
-
-  p("Author names?"),
+  
   br(),
   
   tags$head(tags$style(".shiny-notification {position: fixed; top: 30% ;left: 8%;color: rgb(255, 255, 255); font-size: 18px; line-height: 18px; padding: 16px; border-radius: 1px; font-family: Verdana, Geneva, sans-serif; font-weight: 400; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none; background-image: linear-gradient(to right, rgb(28, 110, 164) 0%, rgb(35, 136, 203) 50%, rgb(20, 78, 117) 100%); box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px; border: 2px solid rgb(28, 110, 164); display: inline-block;")
@@ -34,15 +43,15 @@ fluidPage( theme="bootstrap.css",
                        
                        wellPanel(
                         style= "background: transparent; border:0px",
-                       h1("Tutorials"),
+                       h3("Tutorials"),
                        fluidRow(
                          column(4,
                                h4("Youtube video"),
-                               actionButton(inputId="youtube",label=NULL,style = "width: 120px; height: 85px;border: 1px solid #000000;
+                               actionButton(inputId="youtube",label=NULL,style = "width: 145px; height: 100px;border: 1px solid #000000;
 background: url(yt.png);  background-size: cover; background-position: center center;",onclick="window.open('http://youtube.com', '_blank')")),
                          column(4,
                                 h4("PowerPoint Presentation"),
-                                actionButton(inputId="powerpoint",label=NULL,style = "width: 100px; height: 100px;border: 1px solid #000000;
+                                actionButton(inputId="powerpoint",label=NULL,style = "width: 120px; height: 120px;border: 1px solid #000000;
 background: url(PP.png);  background-size: cover; background-position: center center;",onclick="window.open('http://office.com', '_blank')")),
                        
                        column(4,
@@ -56,7 +65,7 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                      fluidRow(
                        column(4),
                        column(4,
-                                  actionButton("app",label="Go to app",style = "color: rgb(0, 0, 0); font-size: 30px; line-height: 35px; padding: 10px; border-radius: 1px; font-family: Verdana, Geneva, sans-serif; font-weight: 200; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none; border: 2px solid #000000; display: inline-block;}"
+                                  actionButton("app",label="Go to app"
                                           ))
                      )
                      ))),               
@@ -81,11 +90,11 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                           
                         ),
                         tags$p("Press button to load river"),
-                        actionButton('loadbutton1',"Load",style = "color: rgb(0, 0, 0); font-size: 30px; line-height: 35px; padding: 10px; border-radius: 1px; font-family: Verdana, Geneva, sans-serif; font-weight: 200; text-decoration: none; font-style: normal; font-variant: normal; text-transform: none; border: 2px solid #000000; display: inline-block;}"),
+                        actionButton('loadbutton1',"Load"),
                         br(),
-                        br(),
+                        br()
                         #,
-                        tags$p("app")
+                      #  tags$p("app")
                         #tags$a(href='systemcreator2test.Rmd', target='blank',"a", download="systemcreator2test.Rmd")
                         )
                       )
@@ -96,7 +105,8 @@ background: url(PP.png);  background-size: cover; background-position: center ce
 
              tabPanel("Comparative model", #if this tab is changed, a reactive tab should be changed too, so that after clicking Input$Run it will change tabs
                       fluidPage(
-                        titlePanel("name of river"),
+                       
+                        
                         fluidRow(
                           column(6,
                                  tags$h3("Passage parameters")),
@@ -232,7 +242,28 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                                        )
                                       # )
                                    #)
-                                 )     
+                                 ),br(),
+                                 fluidRow(column(4),
+                                          column(4,uiOutput("button"))
+                                          
+                                 )
+                                 ,
+                                 br(),
+                                 fluidRow(column(4,downloadButton('downloadjuv',"Juveniles")),
+                                          column(4,downloadButton('downloadocean',"Ocean")),
+                                          column(4,downloadButton('downloadspawning',"Spawning"))
+                                 )
+                                 ,
+                                 br(),
+                                 fluidPage(tabsetPanel(id="tables",
+                                   tabPanel("juveniles",
+                                   tableOutput("testable2")),
+                                   tabPanel("ocean",
+                                            tableOutput("testable3")),
+                                   tabPanel("Spawning",
+                                            tableOutput("testable4"))
+                                   )
+                                 )
                           )
                         )
                         #,
@@ -245,8 +276,20 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                           #)
                         #)
                       )
-             )
-  )
+             ),
+  ################          
+            tabPanel("Multiple comparisons",value="multiple"
+              
+            )
+  ################
+            
+            ),
+  br(),
+  hr(),
+  br(),
+  tags$h6("A Web Based Tool Designed by: Betsy Barber, Joseph Zydlewski, and Alejandro Molina-Moctezuma")
+  
+  
 )
 )
 
