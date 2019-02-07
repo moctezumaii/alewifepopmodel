@@ -285,7 +285,7 @@ input[type="radio"],
 input[type="checkbox"] {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  padding: 0;
+  padding: 2px;
 }
 
 input[type="date"],
@@ -369,11 +369,12 @@ h1, h2, h3, h4, h5, h6,
 }
 
 h1, .h1 {
-  font-size: 4.6575rem;
+  font-size: 4.1575rem;
+  font-family: Georgia, serif;
 }
 
 h2, .h2 {
-  font-size: 4.126rem;
+  font-size: 3.726rem;
 }
 
 h3, .h3 {
@@ -381,15 +382,15 @@ h3, .h3 {
 }
 
 h4, .h4 {
-  font-size: 2.5945rem;
+  font-size: 2.3945rem;
 }
 
 h5, .h5 {
-  font-size: 2.32875rem;
+  font-size: 1.62875rem;
 }
 
 h6, .h6 {
-  font-size: 1.753rem;
+  font-size: 1.353rem;
 }
 
 .lead {
@@ -487,7 +488,7 @@ mark,
   padding: 0.25rem;
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 0.25rem;
+  border-radius: 0rem;
   max-width: 100%;
   height: auto;
 }
@@ -521,7 +522,7 @@ kbd {
   font-size: 87.5%;
   color: #fff;
   background-color: #212529;
-  border-radius: 0.2rem;
+  border-radius: 0rem;
 }
 
 kbd kbd {
@@ -2012,16 +2013,16 @@ pre code {
 .form-control {
   display: block;
   width: 100%;
-  height: calc(2.5945rem + 2px);
-  padding: 0.5rem 1.1rem;
-  font-size: 1.063rem;
+  height: calc(4.4945rem + 2px);
+  padding: 0.2rem 1.1rem;
+  font-size: 1.963rem;
   font-weight: 400;
-  line-height: 1.5;
-  color: #495057;
+  line-height: 2.5;
+  color: #000000;
   background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 0.25rem;
+  border: 0.2px solid black;
+  border-radius: 0rem;
   -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -2130,7 +2131,7 @@ select.form-control:focus::-ms-value {
   padding: 0.25rem 0.5rem;
   font-size: 0.930125rem;
   line-height: 1.5;
-  border-radius: 0.2rem;
+  border-radius: 0rem;
 }
 
 .form-control-lg {
@@ -2138,7 +2139,7 @@ select.form-control:focus::-ms-value {
   padding: 0.5rem 1rem;
   font-size: 1.32875rem;
   line-height: 1.5;
-  border-radius: 0.3rem;
+  border-radius: 0rem;
 }
 
 select.form-control[size], select.form-control[multiple] {
@@ -2559,7 +2560,7 @@ textarea.form-control {
 .btn {
   display: inline-block;
   font-weight: 400;
-  color: #343a40;
+  color: rgb(0, 0, 0);
   text-align: center;
   vertical-align: middle;
   -webkit-user-select: none;
@@ -2567,11 +2568,11 @@ textarea.form-control {
       -ms-user-select: none;
           user-select: none;
   background-color: transparent;
-  border: 1px solid transparent;
-  padding: 0.5rem 1.1rem;
-  font-size: 1.063rem;
-  line-height: 1.5;
-  border-radius: 0.25rem;
+  border: 1px solid black;
+  padding: 1.1rem;
+  font-size: 2.5rem;
+  line-height: 2.5rem;
+  border-radius: 0rem;
   -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -3191,17 +3192,17 @@ fieldset:disabled a.btn {
 }
 
 .btn-lg, .btn-group-lg > .btn {
-  padding: 0.5rem 1rem;
-  font-size: 1.32875rem;
-  line-height: 1.5;
-  border-radius: 0.3rem;
+  padding: 0.5rem 0rem;
+  font-size: 1.82875rem;
+  line-height: 1.9;
+  border-radius: 0rem;
 }
 
 .btn-sm, .btn-group-sm > .btn {
   padding: 0.25rem 0.5rem;
   font-size: 0.930125rem;
   line-height: 1.5;
-  border-radius: 0.2rem;
+  border-radius: 0rem;
 }
 
 .btn-block {
@@ -3293,7 +3294,7 @@ input[type="button"].btn-block {
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
+  border-radius: 0rem;
 }
 
 .dropdown-menu-right {
@@ -3783,7 +3784,7 @@ input[type="button"].btn-block {
           align-items: center;
   padding: 0.5rem 1.1rem;
   margin-bottom: 0;
-  font-size: 1.063rem;
+  font-size: 1.663rem;
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
@@ -3791,7 +3792,7 @@ input[type="button"].btn-block {
   white-space: nowrap;
   background-color: #e9ecef;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 0.25rem;
+  border-radius: 0.rem;
 }
 
 .input-group-text input[type="radio"],
@@ -3830,7 +3831,7 @@ input[type="button"].btn-block {
   padding: 0.25rem 0.5rem;
   font-size: 0.930125rem;
   line-height: 1.5;
-  border-radius: 0.2rem;
+  border-radius: 0rem;
 }
 
 .input-group-lg > .custom-select,
@@ -4161,16 +4162,16 @@ input[type="button"].btn-block {
 }
 
 .custom-range:focus::-webkit-slider-thumb {
-  -webkit-box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(69, 130, 236, 0.25);
-          box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(69, 130, 236, 0.25);
+  -webkit-box-shadow: 0 0 0 10px black, 0 0 0 0.2rem rgba(100, 130, 36, 0.25);
+          box-shadow: 0 0 0 10px black, 0 0 0 0.2rem rgba(69, 130, 236, 0.25);
 }
 
 .custom-range:focus::-moz-range-thumb {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(69, 130, 236, 0.25);
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(100, 130, 236, 0.25);
 }
 
 .custom-range:focus::-ms-thumb {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(69, 130, 236, 0.25);
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(69, 230, 236, 0.25);
 }
 
 .custom-range::-moz-focus-outer {
@@ -4179,7 +4180,7 @@ input[type="button"].btn-block {
 
 .custom-range::-webkit-slider-thumb {
   width: 1rem;
-  height: 1rem;
+  height: 3rem;
   margin-top: -0.25rem;
   background-color: #4582EC;
   border: 0;
@@ -4205,7 +4206,7 @@ input[type="button"].btn-block {
 
 .custom-range::-webkit-slider-runnable-track {
   width: 100%;
-  height: 0.5rem;
+  height: 1.5rem;
   color: transparent;
   cursor: pointer;
   background-color: #ddd;
@@ -10389,9 +10390,9 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .btn {
-  border-radius: 1.078em;
+  border-radius: 0em;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 0.875em;
+  font-size: 1.275em;
 }
 
 .btn-lg, .btn-group-lg > .btn {
