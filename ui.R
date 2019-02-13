@@ -43,7 +43,7 @@ fluidPage(
                        
                        wellPanel(
                         style= "background: transparent; border:0px",
-                       h3("Tutorials"),
+                      
                        fluidRow(
                          column(4,
                                h4("Youtube video"),
@@ -67,7 +67,8 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                        column(4,
                                   actionButton("app",label="Go to app"
                                           ))
-                     )
+                     ),br(),
+                     fluidPage(wellPanel(style="background: transparent; border:0.5px",includeMarkdown("assumptionss.Rmd")))
                      ))),               
              tabPanel("Choose or create your river",value="test101",
                       fluidPage(
@@ -242,13 +243,9 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                                        )
                                       # )
                                    #)
-                                 ),br(),
-                                 fluidRow(column(4),
-                                          column(4,uiOutput("button"))
-                                          
                                  )
                                  ,
-                                 br(),
+                                 
                                  fluidRow(column(4,downloadButton('downloadjuv',"Juveniles")),
                                           column(4,downloadButton('downloadocean',"Ocean")),
                                           column(4,downloadButton('downloadspawning',"Spawning"))
@@ -256,12 +253,20 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                                  ,
                                  br(),
                                  fluidPage(tabsetPanel(id="tables",
-                                   tabPanel("juveniles",
+                                   tabPanel("Juveniles",
                                    tableOutput("testable2")),
-                                   tabPanel("ocean",
+                                   tabPanel("Ocean",
                                             tableOutput("testable3")),
                                    tabPanel("Spawning",
-                                            tableOutput("testable4"))
+                                            tableOutput("testable4")),
+                                   tabPanel("Multiple comparisons",value="multiple",
+                                            fluidPage(
+                                              br(),
+                                              fluidRow(column(6,tags$h4("*Start or reset comparisons panel*")),column(6,actionButton('resetorstart','Start or reset'))),br(),
+                                              fluidRow(uiOutput("buttons")), 
+                                              fluidRow(tableOutput("comparisonstable")),
+                                              fluidRow(plotOutput("comparisonsplot"))
+                                            ))
                                    )
                                  )
                           )
@@ -276,21 +281,47 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                           #)
                         #)
                       )
-             ),
-  ################          
-            tabPanel("Multiple comparisons",value="multiple"
+             ) ,
+            tabPanel("Contact us",
+              pageWithSidebar(
+                
+                headerPanel("Email sender"),
+                
+                sidebarPanel(
+                  textInput("from", "From:", value="from@gmail.com"),
+                  selectInput("to", "To:",
+                              choices = list("Betsy Barber" = "betsy.barber@maine.edu", "Alejandro Molina-Moctezuma" = "alejandro.molina@maine.edu")),
+                  textInput("subject", "Subject:", value=""),
+                  actionButton("send", "Send mail"),
+                  p("Send email to Betsy Barber for issues or questions regarding the model and results"),
+                p("Send email to Alejandro Molina-Moctezuma for issues regarding bugs or app functionality")
+                ),
+                
+                
+                mainPanel(    
+                  aceEditor("message", value="write message here")
+                )
+                
+              ) 
               
             )
+            #,
+  # ################          
+            # tabPanel("Multiple comparisons",value="multiple",
+             #         fluidPage(
+                      
+              #       fluidRow(column(6,tableOutput("comparisonstable")))
+              # )
+             #)
   ################
             
             ),
   br(),
   hr(),
-  br(),
   tags$h6("A Web Based Tool Designed by: Betsy Barber, Joseph Zydlewski, and Alejandro Molina-Moctezuma")
   
   
 )
-)
+) 
 
 

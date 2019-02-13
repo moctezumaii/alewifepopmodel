@@ -1,0 +1,26 @@
+---
+title:
+author:
+output: html_document
+---
+   
+    
+  
+       
+#### Model assumptions
+***
+This model was developed to compare management scenarios, not to make detailed predictions about the exact number of alewife that will return in a given time frame.  This model can be used to explore general trends and compare the results of scenarios when different average values are used as inputs
+
+
+
+***
+
+* There was no annual environmental variability built into the model
+* Inputs are averages
+* All spawning habitat was considered to be of the same quality
+* All density-dependent mortality is included in the recruitment curve
+* In the absence of dams, fish distribute throughout the system according to habitat availability
+
+*** 
+
+**These assumptions must be kept in mind when interpreting the results of this model!**

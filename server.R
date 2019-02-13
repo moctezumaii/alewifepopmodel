@@ -1,5 +1,7 @@
 library(shiny)
 library(shinyWidgets)
+library(shinyAce)
+library(sendmailR)
 shinyServer( 
   function(input, output, session){
     
@@ -12,24 +14,101 @@ shinyServer(
       updateTabsetPanel(session, "tabs", "test101")
     })
     
+    observe({
+      if(is.null(input$send) || input$send==0) return(NULL)
+      from <- isolate(input$from)
+      to <- isolate(input$to)
+      subject <- isolate(input$subject)
+      msg <- isolate(input$message)
+      sendmail(from, to, subject, msg)
+    })
+    
+    #### IDEA, have them do all THE THINGS every time :)
+    
+    ###TEST
+    emptytable3<-reactiveValues(i=NULL)
     
     emptytable<-function(){
-    et<- data.frame(matrix(NA,nrow=((rivres()[[1]]*3)+2),ncol=1))
-      tmp<-sapply(1:rivres()[[1]], function(x){rep(x,3)}) 
-      rownames(et)<-c(c(tmp),"","")
-      et[,1]<-c(rep(c("Adult UP", "Adult Dw", "Juv DW"),rivres[[1]]),"Years","Total Abundance") 
+    et<- data.frame(matrix(NA,nrow=((rivres()[[1]]*3)+2),ncol=2))
+      tmp<-rep(1:rivres()[[1]],each=3)
+      et[,2]<-c((tmp),"","")
+      et[,1]<-c(rep(c("Adult UP", "Adult Dw", "Juv DW"),rivres()[[1]]),"Years","Total Abundance")
+      return(et)
     }
-    emptytable2<-eventReactive(input$loadbutton1,{
-      emptytable()
-    })
-    empty<-eventReactive(input$loadbutton1,{
-      NULL
-    })
     
-    observeEvent(input$loadbutton1,{
-      updateTabsetPanel(session, "tabs", "Comparative model")
-    })
+     emptytable2<-eventReactive(input$resetorstart,{
+       isolate({
+       emptytable()
+       })
+     })
+     
+    empty<-reactiveValues(i=NULL)
     
+    
+
+     observeEvent(input$loadbutton1,{
+       updateTabsetPanel(session, "tabs", "Comparative model")
+     })
+
+     
+     
+     
+     
+ 
+  
+   
+
+   output$comparisonstable<-renderTable({
+
+      emptytable3$i
+      
+    # colnames(emptytable3$i)[1:2]<-c("Dam", "Parm")
+      
+    })
+   
+   output$comparisonsplot<-renderPlot({
+     names(empty$i)<-paste0("Scenario ",1:length(empty$i))
+     barplot(empty$i,col=c("darkorange2", "chocolate4", "blue4", "darkgoldenrod", "deepskyblue4", "darkgreen","antiquewhite3","cadetblue3","darkseagreen1"))
+             
+   })
+
+#isolate({   
+   observe({input$resetorstart
+     isolate({
+       #       et<- data.frame(matrix(NA,nrow=((rivres()[[1]]*3)+2),ncol=2))
+       #        tmp<-rep(1:rivres()[[1]],each=3)
+       #       rownames(et)<-c((tmp),"","")
+       #    et[,1]<-c(rep(c("Adult UP", "Adult Dw", "Juv DW"),rivres()[[1]]),"Years","Total Abundance")
+       
+       emptytable3$i<-emptytable2()
+       colnames(emptytable3$i)[1:2]<-c("Parm", "Dam")
+       
+     })
+   })
+#})
+   
+   
+    observe({
+      input$forcomparisons
+
+      # We need to use isolate because otherwise whenever values$i changes
+      # the observer will be run again and we'll get stuck in an infinite
+      # loop
+      isolate({
+
+
+
+
+        emptytable3$i <-cbind(emptytable3$i,c(c(rbind(rivres()[[2]], rivres()[[3]],rivres()[[4]] )),nyears(),newfunctionforcomp()))
+        if(ncol(emptytable3$i>3)){
+        colnames(emptytable3$i)[3:ncol(emptytable3$i)]<-paste0("scenario ", 1:(ncol(emptytable3$i)-2))
+        }
+        empty$i<-c(empty$i,newfunctionforcomp())
+        
+      })
+    })
+
+    # 
     #Libraries needed:
     library(tidyverse)
     library(reshape2)
@@ -544,16 +623,16 @@ shinyServer(
    
 
    functionforcomp<-function(){
-     River_Total <- data.frame(res[[2]] %>% select(contains("TotalHU")) %>% rowSums(na.rm = TRUE))
+     River_Total <- data.frame(functionforplot()[[2]] %>% select(contains("TotalHU")) %>% rowSums(na.rm = TRUE))
      colnames(River_Total) <- "RiverTotal"
      EndTotal <- last(River_Total$RiverTotal)
-     
-   }  
-   
-   newfunctionforcomp<-eventReactive(input$forcomparisons,{
+      return(EndTotal)
+   }
+
+   newfunctionforcomp<-eventReactive(input$runthemodel,{
      functionforcomp()
    })
-   
+
   #matri therealdeal()<-function()
    
    
@@ -687,13 +766,13 @@ output$testtable1<-renderPlot({
         #          )
         #     
         #    
-        # }
+        # }"su
         
         #######
         for (j in 1:ans()){
          m<- paste0("div(class= 'option-header', h4('",input[[paste0("damlabel",j)]],"')),flowLayout(",
                         paste0("column(12, sliderInput(",
-                        paste0("'",labelsshort[nofpar], j),"', tags$h5('", labelsfull[nofpar], "'),min = 0, max=100, value=50, step = 1))",
+                        paste0("'",labelsshort[nofpar], j),"', tags$h5('", labelsfull[nofpar], "'),min = 0, max=100, value=100, step = 1))",
                         collapse = ", "),
                  "), br(),",collapse=", "
                  
@@ -705,7 +784,12 @@ output$testtable1<-renderPlot({
         
         
         theresult<-paste0("div(class='option-group',
-               div(class='option-header', tags$h4('PASSAGE')),
+               div(class='option-header',fluidRow(column(3, tags$h4('PASSAGE')),column(3,dropdownButton(tags$h6('Passage'),tags$h6('Passage rates are defined for each dam, including upstream and downstream passage for adults and
+                          downstream passage for juveniles. Passage rates are defined as the percentage of fish that successfully
+                          pass the dam out of those that approach the dam. Rate can be specified between 0% (where no fish
+                                                                                                             pass the dam) to 100% (where all fish pass the dam). The reset button sets all passage rates back to
+                          an estimated baseline for each dam on the St. Croix River. See the technical document 
+                          for further information'),actionButton('info','info'), circle=T,status='danger', icon=icon('question') ,width='200px',tooltip=tooltipOptions(title='Click'))))),
                           ",
            k,
           "flowLayout(
@@ -728,7 +812,12 @@ output$testtable1<-renderPlot({
         
         theresult<-'div(class="option-group",
                                      div(class="option-header",fluidRow(column(3,
-tags$h4("PASSAGE")),column(3,dropdownButton(tags$h5("text"),tags$h6("Here we will explain what this is about"), circle=T,status="danger", icon=icon("question") ,width="200px",tooltip=tooltipOptions(title="Click"))))),
+tags$h4("PASSAGE")),column(3,dropdownButton(tags$h6("Passage"),tags$h6("Passage rates are defined for each dam, including upstream and downstream passage for adults and
+downstream passage for juveniles. Passage rates are defined as the percentage of fish that successfully
+        pass the dam out of those that approach the dam. Rate can be specified between 0% (where no fish
+        pass the dam) to 100% (where all fish pass the dam). The reset button sets all passage rates back to
+        an estimated baseline for each dam on the St. Croix River. See the technical document 
+         for further information"),actionButton("info","info"), circle=T,status="danger", icon=icon("question") ,width="200px",tooltip=tooltipOptions(title="Click"))))),
        
         div(class= "option-header", h4("Dam 1 Milltown")),
         flowLayout(
@@ -824,12 +913,15 @@ br(),
        showTab(inputId = "tabs", target = "test101")
      })
      
+     observeEvent(input$loadbutton1,{
+       showTab(inputId = "tabs", target = "multiple")
+     })
      
-    observeEvent(input$runthemodel,{
-      output$button<-renderUI(
-       {actionButton("forcomparisons","Save for comparison")}
-     )
-    })
+     observeEvent(input$resetorstart,{
+       output[["buttons"]]<-renderUI(
+        {actionButton("forcomparisons","Save estimated total for comparison")}
+      )})
+     
     output$riverout<-renderUI({ 
       
       
@@ -883,7 +975,7 @@ br(),
 output$downloadjuv<-downloadHandler(
   filename = 'juveniles.csv',
   content = function(file){
-    write.csv(downloadall()[[1]],file,row.names=T)
+    write.csv(downloadall()[[1]],file,row.names=F)
   }
 
 )
@@ -891,7 +983,7 @@ output$downloadjuv<-downloadHandler(
 output$downloadocean<-downloadHandler(
   filename = 'ocean.csv',
   content = function(file){
-    write.csv(downloadall()[[2]],file,row.names=T)
+    write.csv(downloadall()[[2]],file,row.names=F)
   }
 
 )
@@ -899,7 +991,8 @@ output$downloadocean<-downloadHandler(
 output$downloadspawning<-downloadHandler(
   filename = 'spawning.csv',
   content = function(file){
-    write.csv(downloadall()[[3]],file,row.names=T)
+    write.csv(downloadall()[[3]],file,row.names=F
+              )
   }
 
 )
@@ -917,6 +1010,8 @@ output$downloadspawning<-downloadHandler(
       downloadall()[[3]]
     })
     
+ 
+    
     }
-) 
+)  
 
