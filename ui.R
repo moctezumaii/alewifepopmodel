@@ -7,7 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
-
+library(shinyAce)
 library(shiny)
 library(shinyWidgets)
 library(shinycssloaders)
