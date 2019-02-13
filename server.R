@@ -1,10 +1,12 @@
 library(shiny)
 library(shinyWidgets)
-library(shinyAce)
-library(sendmailR)
+
 shinyServer( 
   function(input, output, session){
-    
+  library(shinyAce)
+library(sendmailR)
+library(mailR)
+library(rJava)  
     hideTab("tabs","Comparative model")
     hideTab("tabs","test101")
     hideTab("tabs","multiple")
@@ -14,13 +16,31 @@ shinyServer(
       updateTabsetPanel(session, "tabs", "test101")
     })
     
-    observe({
-      if(is.null(input$send) || input$send==0) return(NULL)
-      from <- isolate(input$from)
-      to <- isolate(input$to)
-      subject <- isolate(input$subject)
+    
+    # observe({
+    #   if(is.null(input$send) || input$send==0) return(NULL)
+    #   from <- "shinyappserver@gmail.com"
+    #   to <- "alejandro.molina.moctezuma@gmail.com"
+    #   subject <- isolate(input$subject)
+    #   msg <- isolate(input$message)
+    #   sendmail(from, to, subject, msg, control = list(smtpServer="aspmx.l.google.com", port=25))
+    # })
+    
+    observeEvent(input$send,{
+
+      sender <- isolate(input$from)
+      recipients <- isolate(input$to)
+      subjectemail <- isolate(input$subject)
       msg <- isolate(input$message)
-      sendmail(from, to, subject, msg)
+      send.mail(from = "shinyappserver@gmail.com",
+                to = recipients,
+                subject=subjectemail,
+                body = msg,
+                smtp = list(host.name = "smtp.gmail.com", port = 465,
+                            user.name="shinyappserver@gmail.com", passwd="server10!", ssl=TRUE),
+                authenticate = TRUE,
+                send = TRUE)
+
     })
     
     #### IDEA, have them do all THE THINGS every time :)
