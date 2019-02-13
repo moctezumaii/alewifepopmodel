@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyWidgets)
+library(shinyAce)
 
 shinyServer( 
   function(input, output, session){
