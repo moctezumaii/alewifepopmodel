@@ -7,11 +7,11 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shinyAce)
+
 library(shiny)
 library(shinyWidgets)
 library(shinycssloaders)
-
+library(shinyAce)
 
 fluidPage(
   theme="bootstrap.css",
@@ -26,7 +26,7 @@ fluidPage(
                       .irs-single {color:black; background:#FFF;font-size:18px}
                       .irs-slider {width: 30px; height: 30px; top: 22px;}
                       "),
-  tags$h1("Alewife population model"),
+  tags$h1("Alewife population model *Beta*"),
 
   
   br(),
@@ -44,19 +44,27 @@ fluidPage(
                        wellPanel(
                         style= "background: transparent; border:0px",
                       
-                       fluidRow(
-                         column(4,
-                               h4("Youtube video"),
-                               actionButton(inputId="youtube",label=NULL,style = "width: 145px; height: 100px;border: 1px solid #000000;
-background: url(yt.png);  background-size: cover; background-position: center center;",onclick="window.open('http://youtube.com', '_blank')")),
-                         column(4,
-                                h4("PowerPoint Presentation"),
-                                actionButton(inputId="powerpoint",label=NULL,style = "width: 120px; height: 120px;border: 1px solid #000000;
-background: url(PP.png);  background-size: cover; background-position: center center;",onclick="window.open('http://office.com', '_blank')")),
-                       
-                       column(4,
-                              h4("Read me document"),
-                              actionButton("readme",label=NULL,icon = icon("book", "fa-5x"),style="border: 1px solid #000000"))
+                       fluidRow(column(1),
+                         column(3,
+                               h4("Introduction video"),
+                               actionButton(inputId="youtube",label=NULL,style = "width: 300px; height: 220px;border: 1px solid #000000;
+background: url(IntroductionVideoButton.png);  background-size: cover; background-position: center center;",onclick="window.open('http://youtube.com', '_blank')"),
+                               wellPanel(style="width: 300px;background: transparent; border:0px",h5("Background information about the alewife population model, inputs included, and assumptions"))
+                               ),
+                         column(1),
+                         column(3,
+                                h4("Tutorial video"),
+                                actionButton(inputId="powerpoint",label=NULL,style = "width: 300px; height: 220px;border: 1px solid #000000;
+background: url(TutorialVideoButton.png);  background-size: cover; background-position: center center;",onclick="window.open('http://office.com', '_blank')"),
+                                wellPanel(style="width: 300px;background: transparent; border:0px",h5("Step-by-step tutorial of the online application using several example management questions"))
+                                ),
+                       column(1),
+                       column(3,
+                              h4("Technical Document"),
+                              actionButton("readme",label=NULL,style = "width: 300px; height: 220px;border: 1px solid #000000;
+background: url(TechDocButton.png);  background-size: cover; background-position: center center;"),
+                              wellPanel(style="width: 300px;background: transparent; border:0px",h5("Step-by-step tutorial of the online application using several example management questions"))
+                              )
                        
                       
                      ),
@@ -64,12 +72,15 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                      br(),
                      fluidRow(
                        column(4),
-                       column(4,
-                                  actionButton("app",label="Go to app"
+                       column(5,
+                                  actionButton("app",label=NULL, style = "width: 544px; height: 370px;border: 1px solid #000000;
+background: url(AppStartButton.png);  background-size: cover; background-position: center center;"
                                           ))
                      ),br(),
                      fluidPage(wellPanel(style="background: transparent; border:0.5px",includeMarkdown("assumptionss.Rmd")))
-                     ))),               
+                     ),img(src='AppBottomBanner.png', align = "right", style="width: 1810px; height: 370px"))
+                     
+                     ),               
              tabPanel("Choose or create your river",value="test101",
                       fluidPage(
                         titlePanel("Step 1: Create your River"),
@@ -262,9 +273,12 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                                    tabPanel("Multiple comparisons",value="multiple",
                                             fluidPage(
                                               br(),
-                                              fluidRow(column(6,tags$h4("*Start or reset comparisons panel*")),column(6,actionButton('resetorstart','Start or reset'))),br(),
-                                              fluidRow(uiOutput("buttons")), 
+                                              fluidRow(column(6,tags$h4("*Start or reset comparisons panel*")),column(3,actionButton('resetorstart','Start or reset')),column(2,dropdownButton(tags$h6("If you get an error message, please run a model and click the 'start or reset' button after the model has run"),circle=T,status="danger", icon=icon("question"))
+                                                
+                                              )),br(),
+                                              fluidRow(column(7,uiOutput("buttons")),column(5,uiOutput("download2"))), 
                                               fluidRow(tableOutput("comparisonstable")),
+                                              fluidRow(textOutput("Warning")),
                                               fluidRow(plotOutput("comparisonsplot"))
                                             ))
                                    )
@@ -285,7 +299,7 @@ background: url(PP.png);  background-size: cover; background-position: center ce
             tabPanel("Contact us",
               pageWithSidebar(
                 
-                headerPanel("Email sender"),
+                headerPanel("Contact us"),
                 
                 sidebarPanel(
                   textInput("from", "From:", value="from@gmail.com"),
@@ -304,7 +318,9 @@ background: url(PP.png);  background-size: cover; background-position: center ce
                 
               ) 
               
-            )
+            ),
+            tabPanel("about", 
+                     pre(includeText("readme.txt")))
             #,
   # ################          
             # tabPanel("Multiple comparisons",value="multiple",

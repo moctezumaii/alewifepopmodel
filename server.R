@@ -1,7 +1,6 @@
 library(shiny)
 library(shinyWidgets)
 library(shinyAce)
-
 shinyServer( 
   function(input, output, session){
   library(shinyAce)
@@ -13,10 +12,21 @@ library(rJava)
     hideTab("tabs","multiple")
    # hideTab("tabs","juveniles")
   #  hideTab("tabs","Ocean")
+  #  showModal(modalDialog("Hello, make sure to review one of our tutorials before exploring the model"))
     observeEvent(input$app,{
       updateTabsetPanel(session, "tabs", "test101")
     })
-    
+     observeEvent(input$send, {
+       showNotification("Email sent! Thank you")
+     })
+                        
+    #   showModal(modalDialog(
+    #     title = "Email sent",
+    #     "We will get back to you as soon as possible",
+    #     easyClose = TRUE,
+    #     footer = NULL
+    #   ))
+    # })
     
     # observe({
     #   if(is.null(input$send) || input$send==0) return(NULL)
@@ -36,12 +46,21 @@ library(rJava)
       send.mail(from = "shinyappserver@gmail.com",
                 to = recipients,
                 subject=subjectemail,
-                body = msg,
+                body = paste("From:",sender,"Message:",msg,sep=" /// "),
                 smtp = list(host.name = "smtp.gmail.com", port = 465,
                             user.name="shinyappserver@gmail.com", passwd="server10!", ssl=TRUE),
                 authenticate = TRUE,
                 send = TRUE)
 
+    })
+    
+    observeEvent(input$send, {
+      showModal(modalDialog(
+        title = "Email sent",
+        "We will get back to you as soon as possible",
+        easyClose = TRUE,
+        footer = NULL
+      ))
     })
     
     #### IDEA, have them do all THE THINGS every time :)
@@ -65,7 +84,7 @@ library(rJava)
      
     empty<-reactiveValues(i=NULL)
     
-    
+    number<-reactiveValues(i=NULL)
 
      observeEvent(input$loadbutton1,{
        updateTabsetPanel(session, "tabs", "Comparative model")
@@ -103,7 +122,8 @@ library(rJava)
        
        emptytable3$i<-emptytable2()
        colnames(emptytable3$i)[1:2]<-c("Parm", "Dam")
-       
+       empty$i<-NULL
+       number$i<-NULL
      })
    })
 #})
@@ -125,7 +145,7 @@ library(rJava)
         colnames(emptytable3$i)[3:ncol(emptytable3$i)]<-paste0("scenario ", 1:(ncol(emptytable3$i)-2))
         }
         empty$i<-c(empty$i,newfunctionforcomp())
-        
+        number$i<-c(number$i,nyears())
       })
     })
 
@@ -940,8 +960,14 @@ br(),
      
      observeEvent(input$resetorstart,{
        output[["buttons"]]<-renderUI(
-        {actionButton("forcomparisons","Save estimated total for comparison")}
+        {actionButton("forcomparisons","Save total for comparison") }
       )})
+     
+     observeEvent(input$resetorstart,{
+       output[["download2"]]<-renderUI(
+         {downloadButton("downloadcomp","Download")}
+       )})
+     
      
     output$riverout<-renderUI({ 
       
@@ -971,6 +997,17 @@ br(),
         "If you read this, this chunk of code is working"
       })
     
+    # forwarning<-reactive({emptytable$i})
+    # 
+     output$Warning<-renderText({
+    #  
+        if(length(unique(number$i))>1){
+    #    if (length(unique(forwarning()[2,3:ncol(forwarning())]))>1){
+          "Warning: You are comparing models with different number fo years!!!"
+        } else ""
+    #      
+    #    } else "not a warning"
+     })
     
     
   downloadfunction<-function(){
@@ -1018,6 +1055,19 @@ output$downloadspawning<-downloadHandler(
 
 )
   
+filefordownload<-reactive({emptytable3$i})
+
+output$downloadcomp<-downloadHandler(
+  filename = 'comparison.csv',
+  content = function(file){
+   # write.csv(filefordownload(),file,row.names=F
+    write.csv(emptytable3$i,file,row.names=F
+     )
+  }
+  
+)
+
+
    
     output$testable2<-renderTable({
      
@@ -1031,7 +1081,7 @@ output$downloadspawning<-downloadHandler(
       downloadall()[[3]]
     })
     
- 
+    
     
     }
 )  
