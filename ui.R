@@ -78,7 +78,7 @@ background: url(AppStartButton.png);  background-size: cover; background-positio
                                           ))
                      ),br(),
                      fluidPage(wellPanel(style="background: transparent; border:0.5px",includeMarkdown("assumptionss.Rmd")))
-                     ),img(src='AppBottomBanner.png', align = "right", style="width: 1810px; height: 370px"))
+                     ),img(src='AppBottomBanner.png', align = "center", style="width: 1810px; height: 370px"))
                      
                      ),               
              tabPanel("Choose or create your river",value="test101",
